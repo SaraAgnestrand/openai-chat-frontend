@@ -1,69 +1,75 @@
-# React + TypeScript + Vite
+1. Titel & kort beskrivning
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# NextChat – Frontend
 
-Currently, two official plugins are available:
+En React-baserad chattklient som kopplas till en Node.js-backend med OpenAI:s API.  
+Byggd med Vite, TypeScript och vanilla-extract CSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. Funktioner
 
-## Expanding the ESLint configuration
+Skriva meddelanden till AI-chatboten
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Få svar med kontext från backend
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Enkel, responsiv design
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Byggt med TypeScript för typkontroll
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+3. Teknisk stack
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+React + TypeScript
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Vite (bundler och dev-server)
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+vanilla-extract CSS för styling
+
+Fetch API för kommunikation med backend
+
+4. Förkrav
+
+Node.js
+v18 eller senare
+
+Backend-projektet igång på http://localhost:3000
+
+5. Installation
+
+# Klona repot
+
+git clone https://github.com/dittnamn/nextchat-frontend.git
+cd nextchat-frontend
+
+# Installera beroenden
+
+npm install
+
+6. Starta utvecklingsserver
+   npm run dev
+
+Appen körs på http://localhost:5173
+.
+
+7. Bygga för produktion
+   npm run build
+
+8. Projektstruktur (kort)
+   src/
+   components/ # React-komponenter
+   styles/ # vanilla-extract CSS
+   App.tsx # Huvudkomponent
+   main.tsx # Startpunkt
+   index.html # Rot-html
+
+9. Miljövariabler (om några)
+
+Exempel om du behöver en URL till backend:
+
+VITE_API_URL=http://localhost:3000
+
+10. Framtida förbättringar (valfritt)
+
+Möjlighet att spara konversationer lokalt
+
+Ljus/mörkt läge
+
+Bättre felhantering vid nätverksproblem
