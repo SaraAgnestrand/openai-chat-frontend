@@ -34,7 +34,7 @@ Backend-projektet igång på http://localhost:3000
 
 # Klona repot
 
-git clone https://github.com/dittnamn/nextchat-frontend.git
+git clone https://github.com/SaraAgnestrand/openai-chat-frontend.git 
 cd nextchat-frontend
 
 # Installera beroenden
