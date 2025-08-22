@@ -50,13 +50,13 @@ Appen körs på http://localhost:5173
 # Bygga för produktion
    npm run build
 
-# Projektstruktur (kort)
-   src/
-   components/ # React-komponenter
-   styles/ # vanilla-extract CSS
-   App.tsx # Huvudkomponent
-   main.tsx # Startpunkt
-   index.html # Rot-html
+# Projektstruktur 
+   src/ <br>
+   components/ # React-komponenter<br>
+   styles/ # vanilla-extract CSS<br>
+   App.tsx # Huvudkomponent<br>
+   main.tsx # Startpunkt<br>
+   index.html # Rot-html<br>
 
 # Miljövariabler 
 
@@ -64,7 +64,7 @@ Exempel om du behöver en URL till backend:
 
 VITE_API_URL=http://localhost:3001
 
-# Framtida förbättringar (valfritt)
+# Framtida förbättringar 
 
 Möjlighet att spara konversationer lokalt
 
