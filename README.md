@@ -1,11 +1,9 @@
-1. Titel & kort beskrivning
-
 # NextChat – Frontend
 
 En React-baserad chattklient som kopplas till en Node.js-backend med OpenAI:s API.  
 Byggd med Vite, TypeScript och vanilla-extract CSS.
 
-2. Funktioner
+# Funktioner
 
 Skriva meddelanden till AI-chatboten
 
@@ -15,7 +13,7 @@ Enkel, responsiv design
 
 Byggt med TypeScript för typkontroll
 
-3. Teknisk stack
+# Teknisk stack
 
 React + TypeScript
 
@@ -25,14 +23,14 @@ vanilla-extract CSS för styling
 
 Fetch API för kommunikation med backend
 
-4. Förkrav
+# Förkrav
 
 Node.js
 v18 eller senare
 
 Backend-projektet igång på http://localhost:3000
 
-5. Installation
+# Installation
 
 # Klona repot
 
@@ -43,16 +41,16 @@ cd nextchat-frontend
 
 npm install
 
-6. Starta utvecklingsserver
+# Starta utvecklingsserver
    npm run dev
 
 Appen körs på http://localhost:5173
 .
 
-7. Bygga för produktion
+# Bygga för produktion
    npm run build
 
-8. Projektstruktur (kort)
+# Projektstruktur (kort)
    src/
    components/ # React-komponenter
    styles/ # vanilla-extract CSS
@@ -60,13 +58,13 @@ Appen körs på http://localhost:5173
    main.tsx # Startpunkt
    index.html # Rot-html
 
-9. Miljövariabler (om några)
+# Miljövariabler 
 
 Exempel om du behöver en URL till backend:
 
-VITE_API_URL=http://localhost:3000
+VITE_API_URL=http://localhost:3001
 
-10. Framtida förbättringar (valfritt)
+# Framtida förbättringar (valfritt)
 
 Möjlighet att spara konversationer lokalt
 
