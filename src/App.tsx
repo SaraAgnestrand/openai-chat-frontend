@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as s from "./app.css";
 import { API_BASE } from "./config";
+import { Header } from "./components/Header";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -16,8 +17,32 @@ export default function App() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  function handleCommand(s: string) {
+    if (s.trim() === "/reset") {
+      setMessages([
+        { role: "assistant", content: "Nollställd. Vad vill du prata om?" },
+      ]);
+      setInput("");
+      return true;
+    }
+    return false;
+  }
+
+  function exportChat() {
+    const blob = new Blob([JSON.stringify(messages, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `nextchat-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function sendMessage() {
     if (!input.trim() || loading) return;
+    if (handleCommand(input)) return;
 
     const next: Msg[] = [...messages, { role: "user", content: input.trim() }];
     setMessages(next);
@@ -55,7 +80,7 @@ export default function App() {
 
   return (
     <div className={s.container}>
-      <div className={s.header}>NextChat</div>
+      <Header onReset={() => handleCommand("/reset")} onExport={exportChat} />
 
       <div className={s.chatBox}>
         {messages.map((m, i) => (
@@ -67,7 +92,6 @@ export default function App() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Ny input-rad */}
       <div className={s.inputRow}>
         <input
           className={s.input}
