@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import * as s from "../app.css";
 
 type HeaderProps = {
@@ -15,18 +16,39 @@ export function Header({ onReset, onExport }: HeaderProps) {
         <div className={s.brand}>NextChat</div>
 
         <nav className={s.nav}>
-          <a className={`${s.navItem} ${s.active}`} href="#">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `${s.navItem} ${isActive ? s.active : ""}`
+            }
+          >
             Home
-          </a>
-          <a className={s.navItem} href="#">
+          </NavLink>
+          <NavLink
+            to="/chat"
+            className={({ isActive }) =>
+              `${s.navItem} ${isActive ? s.active : ""}`
+            }
+          >
             Chat
-          </a>
-          <a className={s.navItem} href="#">
+          </NavLink>
+          <NavLink
+            to="/history"
+            className={({ isActive }) =>
+              `${s.navItem} ${isActive ? s.active : ""}`
+            }
+          >
             History
-          </a>
-          <a className={s.navItem} href="#">
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `${s.navItem} ${isActive ? s.active : ""}`
+            }
+          >
             Settings
-          </a>
+          </NavLink>
         </nav>
 
         <div className={s.actions}>
