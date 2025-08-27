@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as s from "../app.css";
 import { API_BASE } from "../config";
+import { loadConfig, systemFrom } from "../lib/appConfig";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -74,12 +75,21 @@ export default function Chat() {
     setInput("");
     setLoading(true);
 
+    // 👇 läs inställningar från localStorage
+    const cfg = loadConfig();
+    const payload = {
+      messages: next,
+      model: cfg.model, // ex. "gpt-4o-mini"
+      temperature: typeof cfg.temperature === "number" ? cfg.temperature : 0.7,
+      system: systemFrom(cfg), // personlighet/egen systemprompt
+    };
     try {
       const res = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify(payload),
       });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setMessages((prev) => [
         ...prev,
@@ -88,10 +98,13 @@ export default function Chat() {
           content: data?.reply?.content || "Tyvärr, något gick fel.",
         },
       ]);
-    } catch {
+    } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Nätverksfel. Är API:t igång?" },
+        {
+          role: "assistant",
+          content: "Nätverksfel eller API-fel. Är API:t igång?",
+        },
       ]);
     } finally {
       setLoading(false);
