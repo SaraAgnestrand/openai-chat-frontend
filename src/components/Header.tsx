@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { FiRotateCcw, FiDownload } from "react-icons/fi";
 import * as s from "../app.css";
 
-type HeaderProps = {
-  onReset: () => void;
-  onExport: () => void;
-};
+type HeaderProps = { onReset: () => void; onExport: () => void };
 
 export function Header({ onReset, onExport }: HeaderProps) {
   const [open, setOpen] = useState(false);
@@ -23,7 +21,7 @@ export function Header({ onReset, onExport }: HeaderProps) {
               `${s.navItem} ${isActive ? s.active : ""}`
             }
           >
-            Home
+            Hem
           </NavLink>
           <NavLink
             to="/chat"
@@ -31,7 +29,7 @@ export function Header({ onReset, onExport }: HeaderProps) {
               `${s.navItem} ${isActive ? s.active : ""}`
             }
           >
-            Chat
+            Chatt
           </NavLink>
           <NavLink
             to="/history"
@@ -39,7 +37,7 @@ export function Header({ onReset, onExport }: HeaderProps) {
               `${s.navItem} ${isActive ? s.active : ""}`
             }
           >
-            History
+            Historik
           </NavLink>
           <NavLink
             to="/settings"
@@ -47,36 +45,44 @@ export function Header({ onReset, onExport }: HeaderProps) {
               `${s.navItem} ${isActive ? s.active : ""}`
             }
           >
-            Settings
+            Inställningar
           </NavLink>
         </nav>
 
-        <div className={s.actions}>
+        <div className={s.actions} style={{ position: "relative" }}>
           <button
             className={s.menuButton}
-            aria-label="Menu"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            aria-label="Snabbåtgärder"
             onClick={() => setOpen((v) => !v)}
           >
             ☰
           </button>
 
           {open && (
-            <div className={s.dropdown}>
+            <div className={s.dropdown} role="menu" aria-label="Snabbåtgärder">
               <button
+                className={s.dropdownItem}
+                role="menuitem"
                 onClick={() => {
                   setOpen(false);
                   onReset();
                 }}
               >
-                🔄 Reset
+                <FiRotateCcw className={s.dropdownIcon} />
+                <span>Nollställ</span>
               </button>
               <button
+                className={s.dropdownItem}
+                role="menuitem"
                 onClick={() => {
                   setOpen(false);
                   onExport();
                 }}
               >
-                ⬇️ Exportera
+                <FiDownload className={s.dropdownIcon} />
+                <span>Exportera</span>
               </button>
             </div>
           )}

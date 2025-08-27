@@ -1,10 +1,12 @@
-// src/app.css.ts
 import { style } from "@vanilla-extract/css";
-
 const MAX_WIDTH = "860px";
-/* ---------- Modern topbar ---------- */
+const COLOR_PRIMARY = "#2c3c8b";
+const COLOR_PRIMARY_DARK = "#24337a";
+const COLOR_PRIMARY_HOVER = "#31439d";
+const ACCENT_HOVER_BG = "#e6f0fa";
+
 export const topbar = style({
-  position: "fixed", // Gör att den ligger fast högst upp
+  position: "fixed",
   top: 0,
   left: 0,
   width: "100%",
@@ -64,14 +66,20 @@ export const actions = style({
 });
 
 export const menuButton = style({
-  background: "#2c3c8b",
+  background: COLOR_PRIMARY,
   color: "#fff",
   border: "none",
-  borderRadius: "8px",
-  padding: "6px 10px",
+  borderRadius: "10px",
+  padding: "8px 12px",
   cursor: "pointer",
   fontSize: "14px",
-  selectors: { "&:hover": { opacity: 0.95 } },
+  selectors: {
+    "&:hover": { opacity: 0.95 },
+    "&:focus-visible": {
+      outline: `2px solid ${ACCENT_HOVER_BG}`,
+      outlineOffset: 2,
+    },
+  },
 });
 
 export const dropdown = style({
@@ -80,28 +88,81 @@ export const dropdown = style({
   right: 0,
   background: "#fff",
   border: "1px solid #e5e7eb",
-  borderRadius: "8px",
-  boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+  borderRadius: "12px",
+  boxShadow: "0 10px 28px rgba(0,0,0,0.10)",
   display: "flex",
   flexDirection: "column",
-  minWidth: "180px",
+  minWidth: "120px",
   overflow: "hidden",
   zIndex: 30,
+  padding: 6,
 });
 
-export const dropdownButton = style({
+export const dropdownItem = style({
   background: "transparent",
   border: "none",
-  textAlign: "left",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
   padding: "10px 12px",
   fontSize: "14px",
+  color: "#334155",
   cursor: "pointer",
+  borderRadius: "8px",
+  textAlign: "left",
+  width: "100%",
   selectors: {
-    "&:hover": { background: "#f3f4f6" },
+    "&:hover": { background: ACCENT_HOVER_BG, color: COLOR_PRIMARY_DARK },
+    "&:active": { transform: "translateY(1px)" },
+    "&:focus-visible": {
+      outline: `2px solid ${COLOR_PRIMARY}`,
+      outlineOffset: 2,
+    },
+    "& + &": { marginTop: 4 },
+  },
+});
+export const dropdownIcon = style({
+  fontSize: "16px",
+  color: COLOR_PRIMARY,
+  flexShrink: 0,
+});
+
+export const dropdownIconLight = style({
+  color: "#fff",
+});
+
+export const dropdownItemAccent = style([
+  dropdownItem,
+  {
+    background: COLOR_PRIMARY,
+    color: "#fff",
+  },
+]);
+
+export const iconButton = style({
+  width: 44,
+  height: 44,
+  borderRadius: "10px",
+  border: "1px solid #e5e7eb",
+  background: "#fff",
+  display: "grid",
+  placeItems: "center",
+  cursor: "pointer",
+  marginLeft: 8,
+  selectors: {
+    "&:hover": { background: ACCENT_HOVER_BG },
+    "&:focus-visible": {
+      outline: `2px solid ${COLOR_PRIMARY}`,
+      outlineOffset: 2,
+    },
   },
 });
 
-/* ---------- App layout ---------- */
+export const iconGlyph = style({
+  fontSize: "18px",
+  color: COLOR_PRIMARY,
+});
+
 export const container = style({
   margin: "0 auto",
   maxWidth: MAX_WIDTH,
@@ -126,7 +187,6 @@ export const header = style({
   fontFamily: "'Inter', sans-serif",
 });
 
-/* ---------- Chat box ---------- */
 export const chatBox = style({
   border: "1px solid #e5e7eb",
   borderRadius: "12px",
@@ -141,7 +201,6 @@ export const chatBox = style({
   background: "linear-gradient(180deg,#fff,#fbfdff)",
 });
 
-/* ---------- Messages ---------- */
 export const msgUser = style({
   alignSelf: "flex-end",
   background: "#dbeafe",
@@ -166,7 +225,6 @@ export const msgBot = style({
   lineHeight: 1.55,
 });
 
-/* ---------- Composer (input + button) ---------- */
 export const inputRow = style({
   display: "flex",
   gap: "8px",
@@ -197,22 +255,30 @@ export const input = style({
 });
 
 export const button = style({
-  padding: "12px 16px",
+  height: "52px",
+  padding: "0 18px",
   border: "none",
   borderRadius: "10px",
-  background: "#2c3c8bff",
+  background: COLOR_PRIMARY_DARK,
   color: "#fff",
   cursor: "pointer",
   fontSize: "1rem",
-  fontWeight: 500,
-  transition: "transform 0.2s ease",
+  fontWeight: 600,
+  transition: "transform 0.18s ease, background 0.18s ease",
   selectors: {
-    "&:hover": { transform: "scale(1.05)" },
+    "&:hover": {
+      transform: "translateY(-1px)",
+      background: COLOR_PRIMARY_HOVER,
+    },
+    "&:active": { transform: "translateY(0)" },
     "&:disabled": { opacity: 0.7, cursor: "not-allowed" },
+    "&:focus-visible": {
+      outline: `2px solid ${ACCENT_HOVER_BG}`,
+      outlineOffset: 2,
+    },
   },
 });
 
-/* ---------- Typing indicator ---------- */
 export const typing = style({
   fontSize: "12px",
   color: "#6b7280",
