@@ -1,10 +1,10 @@
-// src/components/Chat.tsx
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import * as s from "../app.css";
 import { API_BASE } from "../config";
 import { loadConfig, systemFrom } from "../lib/appConfig";
-
-type Msg = { role: "user" | "assistant"; content: string };
+import type { Msg } from "../lib/types";
+import { getSession, saveSession, updateSession } from "../lib/storage";
 
 export default function Chat() {
   const [messages, setMessages] = useState<Msg[]>([
@@ -14,6 +14,8 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef(messages);
+  const [search] = useSearchParams();
+  const sessionId = search.get("id"); // om vi öppnat en sparad session
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -22,7 +24,14 @@ export default function Chat() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Lyssna på Reset/Export från Header
+  // Ladda session om id finns i URL
+  useEffect(() => {
+    if (!sessionId) return;
+    const s = getSession(sessionId);
+    if (s?.messages?.length) setMessages(s.messages);
+  }, [sessionId]);
+
+  // Reset/Export från Header
   useEffect(() => {
     function onReset() {
       setMessages([
@@ -50,11 +59,18 @@ export default function Chat() {
   }, []);
 
   function handleCommand(s: string) {
-    if (s.trim() === "/reset") {
+    const t = s.trim();
+    if (t === "/reset") {
       setMessages([
         { role: "assistant", content: "Nollställd. Vad vill du prata om?" },
       ]);
       setInput("");
+      return true;
+    }
+    if (t === "/save") {
+      const meta = saveSession(messagesRef.current);
+      setInput("");
+      alert(`Sparat som: ${meta.title}`);
       return true;
     }
     return false;
@@ -63,7 +79,6 @@ export default function Chat() {
   async function sendMessage() {
     if (!input.trim() || loading) return;
     if (handleCommand(input)) {
-      setInput("");
       return;
     }
 
@@ -75,14 +90,14 @@ export default function Chat() {
     setInput("");
     setLoading(true);
 
-    // 👇 läs inställningar från localStorage
     const cfg = loadConfig();
     const payload = {
       messages: next,
-      model: cfg.model, // ex. "gpt-4o-mini"
+      model: cfg.model,
       temperature: typeof cfg.temperature === "number" ? cfg.temperature : 0.7,
-      system: systemFrom(cfg), // personlighet/egen systemprompt
+      system: systemFrom(cfg),
     };
+
     try {
       const res = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
@@ -91,14 +106,13 @@ export default function Chat() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data?.reply?.content || "Tyvärr, något gick fel.",
-        },
-      ]);
-    } catch (e) {
+      const reply = data?.reply?.content || "Tyvärr, något gick fel.";
+      const updated = [...next, { role: "assistant", content: reply } as Msg];
+      setMessages(updated);
+
+      // Om vi editerar en sparad session – uppdatera den
+      if (sessionId) updateSession(sessionId, updated);
+    } catch {
       setMessages((prev) => [
         ...prev,
         {

@@ -283,3 +283,87 @@ export const typing = style({
   fontSize: "12px",
   color: "#6b7280",
 });
+
+export const historyList = style({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+});
+
+export const historyItem = style({
+  display: "grid",
+  gridTemplateColumns: "1fr auto",
+  alignItems: "center",
+  gap: "12px",
+  padding: "14px 16px",
+  background: "#fff",
+  border: "1px solid #e5e7eb",
+  borderRadius: "14px",
+  boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+  transition: "box-shadow .2s ease, transform .2s ease",
+  selectors: {
+    "&:hover": {
+      boxShadow: "0 10px 28px rgba(0,0,0,0.09)",
+      transform: "translateY(-1px)",
+    },
+  },
+});
+
+export const historyTitleLink = style({
+  fontSize: "18px",
+  fontWeight: 600,
+  color: "#1f2937",
+  textDecoration: "none",
+  selectors: { "&:hover": { textDecoration: "underline" } },
+});
+
+export const historyMeta = style({
+  marginTop: "6px",
+  fontSize: "12px",
+  color: "#6b7280",
+});
+
+export const historyActions = style({
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+});
+
+export const actionGhost = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  padding: "10px 14px",
+  borderRadius: "12px",
+  border: "1px solid #e5e7eb",
+  background: "#f9fafb",
+  color: "#334155",
+  fontSize: "14px",
+  fontWeight: 500,
+  lineHeight: 1,
+  textDecoration: "none",
+  cursor: "pointer",
+  selectors: {
+    "&:hover": { background: "#e6f0fa", color: "#1e3a8a" },
+    "&:focus-visible": { outline: "2px solid #2c3c8b", outlineOffset: 2 },
+  },
+});
+
+export const actionGhostDanger = style([
+  actionGhost,
+  {
+    borderColor: "#fca5a5",
+    background: "#fff5f5",
+    color: "#991b1b",
+    selectors: {
+      "&:hover": { background: "#fee2e2", color: "#7f1d1d" },
+      "&:focus-visible": { outline: "2px solid #ef4444", outlineOffset: 2 },
+    },
+  },
+]);
+
+export const iconSm = style({
+  fontSize: "16px",
+  flexShrink: 0,
+});
