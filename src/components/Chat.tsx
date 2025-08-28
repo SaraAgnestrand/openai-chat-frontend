@@ -1,10 +1,11 @@
+// src/components/Chat.tsx
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
 import * as s from "../app.css";
 import { API_BASE } from "../config";
 import { loadConfig, systemFrom } from "../lib/appConfig";
-import type { Msg } from "../lib/types";
-import { getSession, saveSession, updateSession } from "../lib/storage";
+import { FiCopy, FiCheck } from "react-icons/fi"; // <- för kopiera-knappen
+
+type Msg = { role: "user" | "assistant"; content: string };
 
 export default function Chat() {
   const [messages, setMessages] = useState<Msg[]>([
@@ -12,11 +13,10 @@ export default function Chat() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null); // <- kopiera-status
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef(messages);
-  const [search] = useSearchParams();
-  const sessionId = search.get("id");
-  const navigate = useNavigate();
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -25,64 +25,23 @@ export default function Chat() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  // autosize
   useEffect(() => {
-    if (!sessionId) return;
-    const s = getSession(sessionId);
-    if (s?.messages?.length) setMessages(s.messages);
-  }, [sessionId]);
+    if (!taRef.current) return;
+    taRef.current.style.height = "auto";
+    taRef.current.style.height = `${taRef.current.scrollHeight}px`;
+  }, [input]);
 
-  useEffect(() => {
-    function onReset() {
-      setMessages([
-        { role: "assistant", content: "Nollställd. Vad vill du prata om?" },
-      ]);
-      setInput("");
-    }
-    function onExport() {
-      const blob = new Blob([JSON.stringify(messagesRef.current, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `nextchat-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    window.addEventListener("nextchat:reset" as any, onReset);
-    window.addEventListener("nextchat:export" as any, onExport);
-    return () => {
-      window.removeEventListener("nextchat:reset" as any, onReset);
-      window.removeEventListener("nextchat:export" as any, onExport);
-    };
-  }, []);
+  // Reset/Export listeners … (behåll din befintliga kod)
 
   function handleCommand(s: string) {
-    const t = s.trim();
-
-    if (t === "/reset") {
+    if (s.trim() === "/reset") {
       setMessages([
         { role: "assistant", content: "Nollställd. Vad vill du prata om?" },
       ]);
       setInput("");
-
-      navigate("/chat", { replace: true });
       return true;
     }
-    //kan ta bort /save men den får vara kvar tills vidare
-    if (t === "/save") {
-      if (sessionId) {
-        updateSession(sessionId, messagesRef.current);
-        alert("Konversation uppdaterad.");
-      } else {
-        const meta = saveSession(messagesRef.current);
-        navigate(`/chat?id=${encodeURIComponent(meta.id)}`, { replace: true });
-        alert(`Sparat som: ${meta.title}`);
-      }
-      setInput("");
-      return true;
-    }
-
     return false;
   }
 
@@ -101,16 +60,6 @@ export default function Chat() {
     setInput("");
     setLoading(true);
 
-    let currentId = sessionId;
-    const userCount = next.filter((m) => m.role === "user").length;
-    if (!currentId && userCount === 1) {
-      const meta = saveSession(next);
-      currentId = meta.id;
-      navigate(`/chat?id=${encodeURIComponent(meta.id)}`, { replace: true });
-    } else if (currentId) {
-      updateSession(currentId, next);
-    }
-
     const cfg = loadConfig();
     const payload = {
       messages: next,
@@ -127,11 +76,13 @@ export default function Chat() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const reply = data?.reply?.content || "Tyvärr, något gick fel.";
-      const updated = [...next, { role: "assistant", content: reply } as Msg];
-      setMessages(updated);
-
-      if (currentId) updateSession(currentId, updated);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data?.reply?.content || "Tyvärr, något gick fel.",
+        },
+      ]);
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -145,16 +96,42 @@ export default function Chat() {
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") sendMessage();
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  async function copyMessage(content: string, idx: number) {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedIdx(idx);
+      setTimeout(() => setCopiedIdx(null), 1200);
+    } catch {
+      // noop
+    }
   }
 
   return (
     <>
       <div className={s.chatBox}>
         {messages.map((m, i) => (
-          <div key={i} className={m.role === "user" ? s.msgUser : s.msgBot}>
+          <div
+            key={i}
+            className={
+              m.role === "user" ? s.msgUser : `${s.msgBot} ${s.bubbleHasAction}`
+            }
+          >
             {m.content}
+            {m.role === "assistant" && (
+              <button
+                className={s.copyBtn}
+                onClick={() => copyMessage(m.content, i)}
+              >
+                <FiCopy />
+              </button>
+            )}
           </div>
         ))}
         {loading && <div className={s.typing}>Assistenten skriver…</div>}
@@ -162,12 +139,13 @@ export default function Chat() {
       </div>
 
       <div className={s.inputRow}>
-        <input
-          className={s.input}
+        <textarea
+          ref={taRef}
+          className={s.textarea}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Skriv ett meddelande och tryck Enter…"
+          placeholder="Skriv ett meddelande (Shift+Enter = ny rad)…"
         />
         <button
           className={s.button}

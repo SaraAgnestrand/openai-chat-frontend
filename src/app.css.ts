@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 const MAX_WIDTH = "860px";
 const COLOR_PRIMARY = "#2c3c8b";
 const COLOR_PRIMARY_DARK = "#24337a";
@@ -175,6 +175,53 @@ export const container = style({
   alignItems: "center",
 });
 
+export const textarea = style({
+  flex: "1 1 auto",
+  minWidth: 0,
+  width: "100%",
+  display: "block",
+  padding: "14px 16px",
+  fontSize: "16px",
+  fontFamily: "inherit",
+  background: "#fff",
+  border: "1px solid #e5e7eb",
+  borderRadius: "10px",
+  lineHeight: 1.4,
+  boxSizing: "border-box",
+  resize: "none",
+  overflow: "hidden",
+  maxHeight: "30vh",
+});
+globalStyle(`${textarea}::placeholder`, {
+  color: "#9ca3af",
+});
+
+export const iconSm = style({
+  fontSize: "16px",
+  flexShrink: 0,
+});
+
+export const copyBtn = style({
+  position: "absolute",
+  top: 6,
+  right: 6,
+  padding: "6px 8px",
+  borderRadius: "8px",
+  border: "1px solid #e5e7eb",
+  background: "#fff",
+  color: "#334155",
+  lineHeight: 0,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  boxShadow: "0 1px 2px rgba(0,0,0,.04)",
+  selectors: {
+    "&:hover": { background: "#e6f0fa", color: "#1e3a8a" },
+    "&:focus-visible": { outline: "2px solid #2c3c8b", outlineOffset: 2 },
+  },
+});
+
 export const header = style({
   fontSize: "32px",
   fontWeight: 600,
@@ -211,6 +258,7 @@ export const msgUser = style({
   boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
   marginBottom: "12px",
   lineHeight: 1.55,
+  position: "relative",
 });
 
 export const msgBot = style({
@@ -223,6 +271,11 @@ export const msgBot = style({
   boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
   marginBottom: "12px",
   lineHeight: 1.55,
+  position: "relative",
+});
+
+export const bubbleHasAction = style({
+  paddingRight: "56px",
 });
 
 export const inputRow = style({
@@ -234,6 +287,7 @@ export const inputRow = style({
   bottom: 0,
   background: "transparent",
   paddingTop: "8px",
+  alignItems: "center",
 });
 
 export const input = style({
@@ -362,8 +416,3 @@ export const actionGhostDanger = style([
     },
   },
 ]);
-
-export const iconSm = style({
-  fontSize: "16px",
-  flexShrink: 0,
-});
