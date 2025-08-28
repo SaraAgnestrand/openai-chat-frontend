@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import * as s from "../app.css";
 import { API_BASE } from "../config";
 import { loadConfig, systemFrom } from "../lib/appConfig";
@@ -15,7 +15,8 @@ export default function Chat() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef(messages);
   const [search] = useSearchParams();
-  const sessionId = search.get("id"); // om vi öppnat en sparad session
+  const sessionId = search.get("id");
+  const navigate = useNavigate();
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -24,14 +25,12 @@ export default function Chat() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Ladda session om id finns i URL
   useEffect(() => {
     if (!sessionId) return;
     const s = getSession(sessionId);
     if (s?.messages?.length) setMessages(s.messages);
   }, [sessionId]);
 
-  // Reset/Export från Header
   useEffect(() => {
     function onReset() {
       setMessages([
@@ -60,25 +59,37 @@ export default function Chat() {
 
   function handleCommand(s: string) {
     const t = s.trim();
+
     if (t === "/reset") {
       setMessages([
         { role: "assistant", content: "Nollställd. Vad vill du prata om?" },
       ]);
       setInput("");
+
+      navigate("/chat", { replace: true });
       return true;
     }
+    //kan ta bort /save men den får vara kvar tills vidare
     if (t === "/save") {
-      const meta = saveSession(messagesRef.current);
+      if (sessionId) {
+        updateSession(sessionId, messagesRef.current);
+        alert("Konversation uppdaterad.");
+      } else {
+        const meta = saveSession(messagesRef.current);
+        navigate(`/chat?id=${encodeURIComponent(meta.id)}`, { replace: true });
+        alert(`Sparat som: ${meta.title}`);
+      }
       setInput("");
-      alert(`Sparat som: ${meta.title}`);
       return true;
     }
+
     return false;
   }
 
   async function sendMessage() {
     if (!input.trim() || loading) return;
     if (handleCommand(input)) {
+      setInput("");
       return;
     }
 
@@ -89,6 +100,16 @@ export default function Chat() {
     setMessages(next);
     setInput("");
     setLoading(true);
+
+    let currentId = sessionId;
+    const userCount = next.filter((m) => m.role === "user").length;
+    if (!currentId && userCount === 1) {
+      const meta = saveSession(next);
+      currentId = meta.id;
+      navigate(`/chat?id=${encodeURIComponent(meta.id)}`, { replace: true });
+    } else if (currentId) {
+      updateSession(currentId, next);
+    }
 
     const cfg = loadConfig();
     const payload = {
@@ -110,8 +131,7 @@ export default function Chat() {
       const updated = [...next, { role: "assistant", content: reply } as Msg];
       setMessages(updated);
 
-      // Om vi editerar en sparad session – uppdatera den
-      if (sessionId) updateSession(sessionId, updated);
+      if (currentId) updateSession(currentId, updated);
     } catch {
       setMessages((prev) => [
         ...prev,
