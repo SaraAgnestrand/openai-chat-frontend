@@ -4,7 +4,9 @@ export type AppConfig = {
   temperature: number;
   personality: "vänlig" | "pedagogisk" | "strikt" | "kortfattad";
   customSystem: string;
-  theme: "light" | "dark"; //har ingen styling kopplat till detta än
+  theme: "light" | "dark";
+  useRag?: boolean;
+  ragTopK?: number;
 };
 
 const KEY = "nextchat:config";
@@ -15,6 +17,8 @@ export const DEFAULT_CFG: AppConfig = {
   personality: "vänlig",
   customSystem: "",
   theme: "light",
+  useRag: true,
+  ragTopK: 4,
 };
 
 export function loadConfig(): AppConfig {
