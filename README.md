@@ -62,16 +62,20 @@ npm run build
 ```
 
 # Projektstruktur 
-   src/ <br>
-   components/ # React-komponenter (Chat m.fl.)<br>
-   lib/ <br>
-   appConfig.ts # config (useRag, ragTopK, m.m.)<br>
-   styles/ # vanilla-extract CSS<br>
-   config.ts # API_BASE
-   App.tsx # Huvudkomponent<br>
-   main.tsx # Startpunkt<br>
-   index.html # Rot-html<br>
-   vite.config.ts # dev-port 5173 + proxy till 3001<br>
+```text
+.
+├─ src/
+│  ├─ components/        # React-komponenter (Chat m.fl.)
+│  ├─ lib/
+│  │  └─ appConfig.ts    # config (useRag, ragTopK, m.m.)
+│  ├─ styles/            # vanilla-extract CSS
+│  ├─ config.ts          # API_BASE
+│  ├─ App.tsx            # Huvudkomponent
+│  └─ main.tsx           # Startpunkt
+├─ index.html            # Rot-html
+└─ vite.config.ts        # dev-port 5173 + proxy till 3001
+```
+
 
 # Konfiguration
 
