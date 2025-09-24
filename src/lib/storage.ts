@@ -1,12 +1,28 @@
 import type { Msg, Session, SessionMeta } from "./types";
+
 const KEY = "nextchat:sessions";
 
 type DB = Record<string, Session>;
-const loadDB = (): DB => JSON.parse(localStorage.getItem(KEY) || "{}");
-const saveDB = (db: DB) => localStorage.setItem(KEY, JSON.stringify(db));
+
+const loadDB = (): DB => {
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || "{}");
+  } catch {
+    return {};
+  }
+};
+
+const saveDB = (db: DB) => {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(db));
+  } catch (e) {
+    console.error("saveDB failed", e);
+  }
+};
 
 const newId = () =>
   "s_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+
 const makeTitle = (msgs: Msg[]) => {
   const first =
     msgs.find((m) => m.role === "user")?.content?.trim() || "Ny konversation";
@@ -23,11 +39,11 @@ export function listSessions(): SessionMeta[] {
       createdAt,
       updatedAt,
     }))
-    .sort((a, b) => (b.updatedAt > a.updatedAt ? 1 : -1));
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 export const getSession = (id: string): Session | null => loadDB()[id] ?? null;
 
-export function saveSession(messages: Msg[], title?: string): SessionMeta {
+export function createSession(messages: Msg[], title?: string): SessionMeta {
   const db = loadDB();
   const id = newId();
   const now = new Date().toISOString();

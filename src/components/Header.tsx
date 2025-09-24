@@ -2,10 +2,15 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FiRotateCcw, FiDownload } from "react-icons/fi";
 import * as s from "../app.css";
+import UploadRag from "./UploadRag";
 
-type HeaderProps = { onReset: () => void; onExport: () => void };
+type HeaderProps = {
+  onReset: () => void;
+  onExport: () => void;
+  onIndexed?: (res: { chunks: number; files: string[] }) => void;
+};
 
-export function Header({ onReset, onExport }: HeaderProps) {
+export function Header({ onReset, onExport, onIndexed }: HeaderProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -62,6 +67,11 @@ export function Header({ onReset, onExport }: HeaderProps) {
 
           {open && (
             <div className={s.dropdown} role="menu" aria-label="Snabbåtgärder">
+              <UploadRag
+                variant="menu"
+                onIndexed={(res) => onIndexed?.(res)}
+                onClose={() => setOpen(false)}
+              />
               <button
                 className={s.dropdownItem}
                 role="menuitem"

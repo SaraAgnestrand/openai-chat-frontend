@@ -1,4 +1,3 @@
-// src/App.tsx
 import { HashRouter, Routes, Route } from "react-router-dom";
 import * as s from "./app.css";
 import { Header } from "./components/Header";
@@ -19,6 +18,13 @@ export default function App() {
           onExport={() =>
             window.dispatchEvent(new CustomEvent("nextchat:export"))
           }
+          onIndexed={({ chunks, files }) => {
+            window.dispatchEvent(
+              new CustomEvent("nextchat:indexed", {
+                detail: { chunks, files },
+              })
+            );
+          }}
         />
         <Routes>
           <Route path="/" element={<Home />} />
